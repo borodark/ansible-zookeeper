@@ -1,4 +1,10 @@
 ---
+# TODO Does not belong HERE!!! MOVE somewhere 
+#  make sure ports are open on FW
+#- firewalld: port=2181/tcp permanent=true state=enabled
+#- firewalld: port=2888/tcp permanent=true state=enabled
+#- firewalld: port=3888/tcp permanent=true state=enabled
+
 - group: name=zookeeper system=yes
 
 - user: name=zookeeper group=zookeeper system=yes createhome=no
