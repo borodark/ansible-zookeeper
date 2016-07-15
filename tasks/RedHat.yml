@@ -1,32 +1,23 @@
 ---
-- file: path=/opt/src state=directory
-- file: path={{zookeeper_dir}} state=directory
+- group: name=zookeeper system=yes
 
-# - name: Download zookeeper version.
-#  get_url: url={{zookeeper_url}} dest=/opt/src/zookeeper-{{zookeeper_version}}.tar.gz
-#  tags: bootstrap
+- user: name=zookeeper group=zookeeper system=yes createhome=no
 
-- name: Install Zookeeper Packages
-  yum: name={{ item }} state=present
-  become: true
-  with_items:
-    - zookeeper
+- file: path={{zookeeper_dir}} state=directory owner=zookeeper group=zookeeper
 
 - name: Install OS Packages
   yum: name={{ item }} state=present
   with_items:
     - libselinux-python
+    - java-1.7.0-openjdk
 
-- name: Unpack tarball.
-  command: tar zxf /opt/src/zookeeper-{{zookeeper_version}}.tar.gz --strip-components=1 chdir={{zookeeper_dir}} creates={{zookeeper_dir}}/bin
+
+- unarchive: src={{zookeeper_url}} dest=/opt copy=no owner=zookeeper group=zookeeper
   tags: bootstrap
 
-- group: name=zookeeper system=yes
-- user: name=zookeeper group=zookeeper system=yes
-
-- name: Change ownership on zookeeper directory.
-  file: path={{zookeeper_dir}} state=directory owner=zookeeper group=zookeeper recurse=yes
-  tags: bootstrap
+#- name: Change ownership on zookeeper directory.
+#  file: path={{zookeeper_dir}} state=directory owner=zookeeper group=zookeeper recurse=yes
+#  tags: bootstrap
 
 - name: Create zookeeper data folder.
   file: path={{data_dir}} state=directory recurse=yes owner=zookeeper group=zookeeper
